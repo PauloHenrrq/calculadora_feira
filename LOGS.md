@@ -2,6 +2,20 @@
 
 ---
 
+## [2026-06-19] Ajuste Estético do Botão de Apagar (Sem Texto e Bola Branca)
+
+### What was done
+1. **Remoção de Texto no Botão de Apagar**:
+   - Ajustada a função `handleDeleteClick` em `app.js` para não alterar o conteúdo do botão para "Apagar?" durante o estado de confirmação, mantendo o caractere `✕` visível em ambos os estágios.
+   - Corrigido o comportamento no qual o texto "Apagar?" ficava estagnado caso o timeout de 3 segundos de segurança expirasse.
+2. **Estilização Visual do Botão (Bola Branca/Vermelha)**:
+   - Configurada a classe `.item-delete` (estágio inicial) em `style.css` com fundo branco sólido (`#ffffff`), borda média cinza (`var(--border-input)`) e cor de texto vermelha (`var(--red)`), simulando uma bola branca com um X vermelho.
+   - Mantida a classe `.item-delete.confirming` (estágio de confirmação, antes do 2º clique) com fundo vermelho (`var(--red)`), bordas vermelhas e o caractere `✕` em branco (`#ffffff`).
+3. **Upgrade de Cache (sw.js)**:
+   - Atualizada a chave de cache do Service Worker para `v13` para acionar a reinstalação e o auto-reload da aplicação na tela da cliente final.
+
+---
+
 ## [2026-06-19] Simplificação e Alinhamento das Labels do Formulário de Peso
 
 ### What was done
