@@ -101,7 +101,8 @@ function formatCurrency(value) {
 function parseInputNumber(valueStr) {
   if (valueStr === undefined || valueStr === null) return 0;
   let clean = String(valueStr).trim();
-  clean = clean.replace(/,/g, '.');
+  // Remove pontos de milhar e substitui vírgula decimal por ponto
+  clean = clean.replace(/\./g, '').replace(',', '.');
   const parsed = parseFloat(clean);
   return isNaN(parsed) ? 0 : parsed;
 }
@@ -121,6 +122,30 @@ function showToast(message, duration = 2000) {
   dom.toast.classList.remove('hidden');
   clearTimeout(showToast._timer);
   showToast._timer = setTimeout(() => dom.toast.classList.add('hidden'), duration);
+}
+
+function applyDecimalMask(inputElement) {
+  if (!inputElement) return;
+
+  const formatValue = (val) => {
+    let clean = String(val).replace(/\D/g, '');
+    if (!clean) return '';
+    const numberValue = parseInt(clean, 10) / 100;
+    return numberValue.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
+
+  inputElement.addEventListener('input', (e) => {
+    e.target.value = formatValue(e.target.value);
+  });
+
+  inputElement.addEventListener('blur', (e) => {
+    if (e.target.value) {
+      e.target.value = formatValue(e.target.value);
+    }
+  });
 }
 
 // ── Storage ──
@@ -205,8 +230,7 @@ window.handleDeleteClick = function(id, btn) {
     
     const timeoutId = setTimeout(() => {
       btn.classList.remove('confirming');
-      btn.innerHTML = '✕';
-    }, 3500);
+    }, 3000);
     btn.dataset.timeoutId = timeoutId;
   }
 };
@@ -234,8 +258,14 @@ window.openEditModal = function(id) {
 
   state.editingItemId = id;
   dom.editItemName.value = item.name;
-  dom.editItemPrice.value = item.pricePerKg.toString().replace('.', ',');
-  dom.editItemQty.value = item.quantity.toString().replace('.', ',');
+  dom.editItemPrice.value = item.pricePerKg.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  dom.editItemQty.value = item.quantity.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
   
   const itemUnit = item.unit || 'kg';
   document.querySelectorAll('#editUnitSelector .unit-option').forEach(btn => {
@@ -652,30 +682,67 @@ function init() {
   loadFromStorage();
   dom.markupInput.value = state.markup;
   setupUnitSelectors();
+  
+  // Atrela as máscaras decimais aos inputs numéricos
+  applyDecimalMask(dom.itemPrice);
+  applyDecimalMask(dom.itemQty);
+  applyDecimalMask(dom.editItemPrice);
+  applyDecimalMask(dom.editItemQty);
+  
   render();
 
-  // Register service worker for offline support
+  // Register service worker for offline support with auto-reload on update
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              window.location.reload();
+            }
+          });
+        }
+      });
+    }).catch(() => {});
   }
 }
 
 function setupUnitSelectors() {
-  const setupSelector = (selectorId) => {
+  const setupSelector = (selectorId, inputId) => {
     const container = document.getElementById(selectorId);
-    if (!container) return;
+    const input = document.getElementById(inputId);
+    if (!container || !input) return;
     
     container.addEventListener('click', (e) => {
       const btn = e.target.closest('.unit-option');
       if (!btn) return;
+      if (btn.classList.contains('active')) return;
       
+      const targetUnit = btn.dataset.unit;
+      
+      // Alterna a unidade ativa
       container.querySelectorAll('.unit-option').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      
+      // Converte o valor do input em tempo real
+      let val = parseInputNumber(input.value);
+      if (val > 0) {
+        if (targetUnit === 'g') {
+          val = val * 1000;
+        } else {
+          val = val / 1000;
+        }
+        input.value = val.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
     });
   };
   
-  setupSelector('addUnitSelector');
-  setupSelector('editUnitSelector');
+  setupSelector('addUnitSelector', 'itemQty');
+  setupSelector('editUnitSelector', 'editItemQty');
 }
 
 init();
