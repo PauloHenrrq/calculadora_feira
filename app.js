@@ -98,6 +98,14 @@ function formatCurrency(value) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+function parseInputNumber(valueStr) {
+  if (valueStr === undefined || valueStr === null) return 0;
+  let clean = String(valueStr).trim();
+  clean = clean.replace(/,/g, '.');
+  const parsed = parseFloat(clean);
+  return isNaN(parsed) ? 0 : parsed;
+}
+
 function formatDate(dateStr) {
   const d = new Date(dateStr);
   const day = d.getDate().toString().padStart(2, '0');
@@ -136,37 +144,43 @@ function loadFromStorage() {
 }
 
 // ── Calculation ──
-function calculateItemTotal(pricePerKg, quantity, markup) {
-  // Retorna o custo real sem margem
-  return pricePerKg * quantity;
+function getItemQtyInKg(item) {
+  const qty = item.quantity || 0;
+  const unit = item.unit || 'kg';
+  return unit === 'g' ? qty / 1000 : qty;
+}
+
+function calculateItemTotal(pricePerKg, quantity, unit) {
+  const qtyInKg = (unit === 'g') ? quantity / 1000 : quantity;
+  return Math.round((pricePerKg * qtyInKg) * 100) / 100;
 }
 
 function getListTotal() {
-  // Retorna a soma do custo real de todos os itens (sem acréscimo)
   return state.items.reduce((sum, item) => {
-    return sum + (item.pricePerKg * item.quantity);
+    return sum + calculateItemTotal(item.pricePerKg, item.quantity, item.unit);
   }, 0);
 }
 
 function getListVendaTotal() {
-  // Retorna a soma do valor de venda com acréscimo de todos os itens
   return state.items.reduce((sum, item) => {
-    return sum + (item.pricePerKg * item.quantity * (1 + state.markup / 100));
+    const itemCost = calculateItemTotal(item.pricePerKg, item.quantity, item.unit);
+    const itemVenda = Math.round((itemCost * (1 + state.markup / 100)) * 100) / 100;
+    return sum + itemVenda;
   }, 0);
 }
 
 function getListProfitTotal() {
-  // Retorna o lucro total acumulado
-  return getListVendaTotal() - getListTotal();
+  return Math.round((getListVendaTotal() - getListTotal()) * 100) / 100;
 }
 
 // ── CRUD Operations ──
-function addItem(name, pricePerKg, quantity) {
+function addItem(name, pricePerKg, quantity, unit) {
   const item = {
     id: generateId(),
     name: name.trim(),
-    pricePerKg: parseFloat(pricePerKg),
-    quantity: parseFloat(quantity)
+    pricePerKg: parseInputNumber(pricePerKg),
+    quantity: parseInputNumber(quantity),
+    unit: unit || 'kg'
   };
   state.items.unshift(item);
   saveToStorage();
@@ -220,8 +234,13 @@ window.openEditModal = function(id) {
 
   state.editingItemId = id;
   dom.editItemName.value = item.name;
-  dom.editItemPrice.value = item.pricePerKg;
-  dom.editItemQty.value = item.quantity;
+  dom.editItemPrice.value = item.pricePerKg.toString().replace('.', ',');
+  dom.editItemQty.value = item.quantity.toString().replace('.', ',');
+  
+  const itemUnit = item.unit || 'kg';
+  document.querySelectorAll('#editUnitSelector .unit-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.unit === itemUnit);
+  });
   
   dom.editModal.classList.remove('hidden');
 };
@@ -235,10 +254,13 @@ window.saveEditModal = function() {
   const id = state.editingItemId;
   if (!id) return;
 
-  const newPrice = parseFloat(dom.editItemPrice.value);
-  const newQty = parseFloat(dom.editItemQty.value);
+  const newPrice = parseInputNumber(dom.editItemPrice.value);
+  const newQty = parseInputNumber(dom.editItemQty.value);
+  
+  const activeUnitBtn = document.querySelector('#editUnitSelector .unit-option.active');
+  const newUnit = activeUnitBtn ? activeUnitBtn.dataset.unit : 'kg';
 
-  if (isNaN(newPrice) || newPrice <= 0 || isNaN(newQty) || newQty <= 0) {
+  if (newPrice <= 0 || newQty <= 0) {
     showToast('⚠️ Preço e quantidade inválidos');
     return;
   }
@@ -247,6 +269,7 @@ window.saveEditModal = function() {
   if (item) {
     item.pricePerKg = newPrice;
     item.quantity = newQty;
+    item.unit = newUnit;
     saveToStorage();
     render();
     window.closeEditModal();
@@ -270,7 +293,8 @@ function listsAreEqual(listA, listB) {
     return (
       itemA.name.toLowerCase().trim() === itemB.name.toLowerCase().trim() &&
       itemA.pricePerKg === itemB.pricePerKg &&
-      itemA.quantity === itemB.quantity
+      itemA.quantity === itemB.quantity &&
+      (itemA.unit || 'kg') === (itemB.unit || 'kg')
     );
   });
 }
@@ -374,16 +398,18 @@ function renderItems() {
   }
 
   dom.itemsList.innerHTML = filtered.map(item => {
-    const custoTotal = item.pricePerKg * item.quantity;
-    const precoVendaKg = item.pricePerKg * (1 + state.markup / 100);
-    const lucro = (item.pricePerKg * (state.markup / 100)) * item.quantity;
+    const unit = item.unit || 'kg';
+    const qtyDisplay = unit === 'g' ? `${item.quantity} g` : `${item.quantity} kg`;
+    const custoTotal = calculateItemTotal(item.pricePerKg, item.quantity, item.unit);
+    const precoVendaKg = Math.round((item.pricePerKg * (1 + state.markup / 100)) * 100) / 100;
+    const lucro = Math.round((calculateItemTotal(item.pricePerKg * (state.markup / 100), item.quantity, item.unit)) * 100) / 100;
 
     return `
       <div class="item-card" data-id="${item.id}">
         <div class="item-info">
           <div class="item-name">${escapeHtml(item.name)}</div>
           <div class="item-detail">
-            <div>Custo: ${item.quantity} kg × ${formatCurrency(item.pricePerKg)}/kg = <strong>${formatCurrency(custoTotal)}</strong></div>
+            <div>Custo: ${qtyDisplay} × ${formatCurrency(item.pricePerKg)}/kg = <strong>${formatCurrency(custoTotal)}</strong></div>
             <div style="color: var(--amber); font-weight: 700; margin-top: 3px; font-size: 0.9rem;">
               Etiqueta: ${formatCurrency(precoVendaKg)}/kg
             </div>
@@ -499,11 +525,13 @@ function shareList() {
   text += `📊 Acréscimo do mercadinho: ${state.markup}%\n\n`;
 
   state.items.forEach(item => {
-    const custoTotal = item.pricePerKg * item.quantity;
-    const precoVendaKg = item.pricePerKg * (1 + state.markup / 100);
-    const lucro = (item.pricePerKg * (state.markup / 100)) * item.quantity;
+    const unit = item.unit || 'kg';
+    const qtyDisplay = unit === 'g' ? `${item.quantity}g` : `${item.quantity}kg`;
+    const custoTotal = calculateItemTotal(item.pricePerKg, item.quantity, item.unit);
+    const precoVendaKg = Math.round((item.pricePerKg * (1 + state.markup / 100)) * 100) / 100;
+    const lucro = Math.round((calculateItemTotal(item.pricePerKg * (state.markup / 100), item.quantity, item.unit)) * 100) / 100;
 
-    text += `• *${item.name}* (${item.quantity}kg)\n`;
+    text += `• *${item.name}* (${qtyDisplay})\n`;
     text += `  └ Custo Feira: ${formatCurrency(item.pricePerKg)}/kg (Total: ${formatCurrency(custoTotal)})\n`;
     text += `  └ Etiqueta Venda: *${formatCurrency(precoVendaKg)}/kg* (Lucro: *+${formatCurrency(lucro)}*)\n\n`;
   });
@@ -532,10 +560,18 @@ dom.addForm.addEventListener('submit', (e) => {
   const price = dom.itemPrice.value;
   const qty = dom.itemQty.value;
 
+  const activeUnitBtn = document.querySelector('#addUnitSelector .unit-option.active');
+  const unit = activeUnitBtn ? activeUnitBtn.dataset.unit : 'kg';
+
   if (!name || !price || !qty) return;
 
-  addItem(name, price, qty);
+  addItem(name, price, qty, unit);
   dom.addForm.reset();
+
+  // Reseta o seletor de unidade para 'kg' por padrão
+  document.querySelectorAll('#addUnitSelector .unit-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.unit === 'kg');
+  });
   
   // Visual feedback and redirect to list tab automatically (KISS)
   setTimeout(() => {
@@ -615,12 +651,31 @@ dom.editModal.addEventListener('click', (e) => {
 function init() {
   loadFromStorage();
   dom.markupInput.value = state.markup;
+  setupUnitSelectors();
   render();
 
   // Register service worker for offline support
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
+}
+
+function setupUnitSelectors() {
+  const setupSelector = (selectorId) => {
+    const container = document.getElementById(selectorId);
+    if (!container) return;
+    
+    container.addEventListener('click', (e) => {
+      const btn = e.target.closest('.unit-option');
+      if (!btn) return;
+      
+      container.querySelectorAll('.unit-option').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  };
+  
+  setupSelector('addUnitSelector');
+  setupSelector('editUnitSelector');
 }
 
 init();
