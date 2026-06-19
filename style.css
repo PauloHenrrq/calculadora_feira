@@ -854,6 +854,8 @@ body {
 /* ── Utilities ── */
 .hidden {
   display: none !important;
+}
+
 .history-list {
   display: flex;
   flex-direction: column;
@@ -863,27 +865,34 @@ body {
 /* ── Unit Selector (KG / G) ── */
 .unit-selector {
   display: flex;
-  background: var(--bg-input);
-  border: 1.5px solid var(--border-input);
-  border-radius: var(--radius-sm);
-  padding: 2px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 3px;
   width: fit-content;
+  align-items: center;
 }
 
 .unit-option {
-  padding: 4px 10px;
+  padding: 4px 12px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   border: none;
   background: transparent;
   cursor: pointer;
-  border-radius: calc(var(--radius-sm) - 1px);
+  border-radius: var(--radius-full);
   transition: var(--transition);
   outline: none;
 }
 
 .unit-option.active {
-  background: var(--accent);
+  background: var(--green);
   color: #ffffff;
+  box-shadow: var(--shadow-xs);
+}
+
+.unit-option:not(.active):hover {
+  color: var(--text);
+  background: rgba(15, 23, 42, 0.04);
 }
