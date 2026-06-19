@@ -111,14 +111,14 @@
             </div>
             
             <div class="form-group">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <label for="itemQty" class="form-label" style="margin-bottom: 0;">Peso</label>
+              <label for="itemQty" class="form-label">Peso</label>
+              <div class="input-suffix">
+                <input type="text" id="itemQty" class="form-input" inputmode="decimal" placeholder="0,00" required>
                 <div class="unit-selector" id="addUnitSelector">
                   <button type="button" class="unit-option active" data-unit="kg">KG</button>
                   <button type="button" class="unit-option" data-unit="g">g</button>
                 </div>
               </div>
-              <input type="text" id="itemQty" class="form-input" inputmode="decimal" placeholder="0,00" required>
             </div>
           </div>
 
@@ -207,14 +207,14 @@
             </div>
           </div>
           <div class="form-group">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <label for="editItemQty" class="form-label" style="margin-bottom: 0;">Peso</label>
+            <label for="editItemQty" class="form-label">Peso</label>
+            <div class="input-suffix">
+              <input type="text" id="editItemQty" class="form-input" inputmode="decimal" required />
               <div class="unit-selector" id="editUnitSelector">
                 <button type="button" class="unit-option active" data-unit="kg">KG</button>
                 <button type="button" class="unit-option" data-unit="g">g</button>
               </div>
             </div>
-            <input type="text" id="editItemQty" class="form-input" inputmode="decimal" required />
           </div>
         </div>
         <div class="modal-actions" style="margin-top: 16px;">

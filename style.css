@@ -357,6 +357,21 @@ body {
   padding-left: 44px;
 }
 
+.input-suffix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-suffix .form-input {
+  padding-right: 84px;
+}
+
+.input-suffix .unit-selector {
+  position: absolute;
+  right: 8px;
+}
+
 /* ── Buttons ── */
 .btn {
   display: flex;
