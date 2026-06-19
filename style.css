@@ -857,9 +857,36 @@ body {
 /* ── Utilities ── */
 .hidden {
   display: none !important;
-}
 .history-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+/* ── Unit Selector (KG / G) ── */
+.unit-selector {
+  display: flex;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  width: fit-content;
+}
+
+.unit-option {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: calc(var(--radius-sm) - 1px);
+  transition: var(--transition);
+  outline: none;
+}
+
+.unit-option.active {
+  background: var(--accent);
+  color: #ffffff;
 }
