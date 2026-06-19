@@ -2,6 +2,22 @@
 
 ---
 
+## [2026-06-19] Máscara Decimal em Tempo Real, Conversão em Cliques e Upgrade de Exclusão
+
+### What was done
+1. **Máscara Decimal em Tempo Real**:
+   - Implementada a máscara `applyDecimalMask` atrelada aos quatro inputs numéricos (Preço, Peso, e os respectivos campos no Modal de Edição). O usuário digita apenas inteiros e o input formata de trás para frente como decimal (ex: `600` vira `6,00`).
+   - Atualizada a helper `parseInputNumber` para limpar separadores de milhares (pontos) e converter vírgulas em pontos, garantindo a integridade dos cálculos no parser.
+2. **Conversão de Unidade em Tempo Real**:
+   - Atualizado o seletor de unidade (`KG` / `g`) para converter o valor atual digitado no input de peso instantaneamente no clique (multiplicando ou dividindo por 1000) e formatar o valor convertido na máscara.
+3. **Upgrade no Botão de Apagar (Double Click)**:
+   - Removido o delay de animação e expansão de texto. O botão mantém o tamanho circular original (`34x34px`) e o ícone `✕`. 
+   - Ao primeiro clique, o botão muda de cor para vermelho sólido com efeito de escala (pulso) e sombra pulsante. O segundo clique dentro de 3 segundos efetiva a remoção imediata do item.
+4. **Service Worker com Auto-Reload**:
+   - Configurado o fluxo de escuta ao Service Worker no `app.js`. Quando detectada e instalada uma nova versão (cache versionado `feira-calc-v11`), o app recarrega a página automaticamente para garantir que a cliente obtenha as melhorias sem ação manual.
+
+---
+
 ## [2026-06-19] Alternância de Unidade (KG/g) & Tratamento de Entrada com Vírgula
 
 ### What was done
