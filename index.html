@@ -106,13 +106,19 @@
               <label for="itemPrice" class="form-label">Preço do Kilo (R$)</label>
               <div class="input-prefix">
                 <span>R$</span>
-                <input type="number" id="itemPrice" class="form-input" inputmode="decimal" step="0.01" min="0.01" placeholder="0,00" required>
+                <input type="text" id="itemPrice" class="form-input" inputmode="decimal" placeholder="0,00" required>
               </div>
             </div>
             
             <div class="form-group">
-              <label for="itemQty" class="form-label">Quantidade / Peso (KG)</label>
-              <input type="number" id="itemQty" class="form-input" inputmode="decimal" step="0.01" min="0.01" placeholder="0,00" required>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <label for="itemQty" class="form-label" style="margin-bottom: 0;">Quantidade / Peso</label>
+                <div class="unit-selector" id="addUnitSelector">
+                  <button type="button" class="unit-option active" data-unit="kg">KG</button>
+                  <button type="button" class="unit-option" data-unit="g">g</button>
+                </div>
+              </div>
+              <input type="text" id="itemQty" class="form-input" inputmode="decimal" placeholder="0,00" required>
             </div>
           </div>
 
@@ -197,12 +203,18 @@
             <label for="editItemPrice" class="form-label">Preço do Kilo (R$)</label>
             <div class="input-prefix">
               <span>R$</span>
-              <input type="number" id="editItemPrice" class="form-input" inputmode="decimal" step="0.01" min="0.01" required />
+              <input type="text" id="editItemPrice" class="form-input" inputmode="decimal" required />
             </div>
           </div>
           <div class="form-group">
-            <label for="editItemQty" class="form-label">Peso / Qtd (KG)</label>
-            <input type="number" id="editItemQty" class="form-input" inputmode="decimal" step="0.001" min="0.001" required />
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label for="editItemQty" class="form-label" style="margin-bottom: 0;">Peso / Qtd</label>
+              <div class="unit-selector" id="editUnitSelector">
+                <button type="button" class="unit-option active" data-unit="kg">KG</button>
+                <button type="button" class="unit-option" data-unit="g">g</button>
+              </div>
+            </div>
+            <input type="text" id="editItemQty" class="form-input" inputmode="decimal" required />
           </div>
         </div>
         <div class="modal-actions" style="margin-top: 16px;">
