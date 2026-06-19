@@ -2,6 +2,18 @@
 
 ---
 
+## [2026-06-19] Correção de Fechamento do CSS e Redesenho do Switch Pill Selector
+
+### What was done
+1. **Correção de Chave do CSS**:
+   - Corrigida a falta de fechamento (`}`) na classe `.hidden` em `style.css` que estava quebrando silenciosamente todo o processamento de regras CSS declaradas após a linha 855.
+2. **Redesenho do Pill Switch Selector (KG / g)**:
+   - Remodelado o `.unit-selector` e `.unit-option` para criar um switch pill totalmente arredondado com bordas discretas e fundo off-white.
+   - Definida a cor ativa do botão como verde (`var(--green)`) com texto em branco e sombra leve.
+   - O alinhamento horizontal com o label "Quantidade / Peso" foi normalizado e posicionado de forma proporcional e atrativa.
+
+---
+
 ## [2026-06-19] Máscara Decimal em Tempo Real, Conversão em Cliques e Upgrade de Exclusão
 
 ### What was done
