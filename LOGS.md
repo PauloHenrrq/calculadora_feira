@@ -2,6 +2,18 @@
 
 ---
 
+## [2026-06-19] Simplificação e Alinhamento das Labels do Formulário de Peso
+
+### What was done
+1. **Labels de Peso Simplificadas**:
+   - Modificado o rótulo do formulário de criação de "Quantidade / Peso" para apenas "Peso".
+   - Modificado o rótulo no formulário de edição do modal de "Peso / Qtd" para apenas "Peso".
+   - O ajuste garante que os elements de label fiquem concisos, mantendo perfeita proporção de alinhamento com as caixas de input nas colunas laterais.
+2. **Service Worker v12**:
+   - Atualizado o cache local do Service Worker em `sw.js` para a versão `v12` para garantir que o navegador da cliente detecte e ative a nova versão do layout HTML e estilos.
+
+---
+
 ## [2026-06-19] Correção de Fechamento do CSS e Redesenho do Switch Pill Selector
 
 ### What was done
