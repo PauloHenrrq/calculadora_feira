@@ -519,14 +519,11 @@ body {
 }
 
 .item-delete.confirming {
-  width: auto;
-  border-radius: var(--radius-sm);
-  padding: 0 10px;
   background: var(--red);
   color: #ffffff;
   border-color: var(--red);
-  font-weight: 700;
-  font-size: 0.75rem;
+  transform: scale(1.12);
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.3);
 }
 
 /* ── Inline Edit Form ── */
