@@ -2,6 +2,24 @@
 
 ---
 
+## [2026-06-19] Alternância de Unidade (KG/g) & Tratamento de Entrada com Vírgula
+
+### What was done
+1. **Alternância de Unidade (KG/g)**:
+   - Adicionada estrutura visual de botões de unidade (`KG` ou `g`) no formulário de inserção e no modal de edição.
+   - Atualizados os métodos `addItem`, `openEditModal` e `saveEditModal` em `app.js` para ler e salvar a unidade escolhida (`unit`).
+   - Adicionada a helper `getItemQtyInKg` para converter gramas (`g`) para quilos (`kg`) antes de realizar os cálculos matemáticos.
+   - Renderização dinâmica do peso na lista de itens e no compartilhamento do WhatsApp (`350 g` ou `1.2 kg`).
+2. **Tratamento de Entrada com Vírgula**:
+   - Criação da helper `parseInputNumber` para converter inputs de texto numérico substituindo vírgulas por pontos (`replace(/,/g, '.')`), garantindo alta resiliência e suporte a teclados numéricos móveis do Brasil.
+   - Mudança dos tipos de inputs numéricos no HTML de `number` para `text` com `inputmode="decimal"`, resolvendo bloqueios de digitação em celulares e arredondando cálculos centesimais.
+3. **Compatibilidade com Dados Antigos**:
+   - O carregamento do local storage foi projetado para manter a unidade `'kg'` como padrão caso `item.unit` esteja ausente, garantindo compatibilidade reversa total com as listas gravadas pela cliente.
+4. **Precisão de Arredondamento**:
+   - Implementado arredondamento manual das contas matemáticas e totais para no máximo duas casas decimais no JavaScript para evitar discrepâncias geradas por dízimas de ponto flutuante.
+
+---
+
 ## [2026-06-09] Deduplicação e Comparador no Histórico
 
 ### What was done
