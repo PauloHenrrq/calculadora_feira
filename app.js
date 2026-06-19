@@ -221,12 +221,10 @@ window.handleDeleteClick = function(id, btn) {
     // Reset all other pending deletions first
     document.querySelectorAll('.item-delete.confirming').forEach(b => {
       b.classList.remove('confirming');
-      b.innerHTML = '✕';
       if (b.dataset.timeoutId) clearTimeout(parseInt(b.dataset.timeoutId));
     });
     
     btn.classList.add('confirming');
-    btn.innerHTML = 'Apagar?';
     
     const timeoutId = setTimeout(() => {
       btn.classList.remove('confirming');

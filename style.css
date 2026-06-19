@@ -522,8 +522,8 @@ body {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-full);
-  border: 2px solid var(--red-light);
-  background: var(--red-light);
+  border: 2px solid var(--border-input);
+  background: #ffffff;
   color: var(--red);
   font-size: 0.9rem;
   cursor: pointer;
