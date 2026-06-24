@@ -101,23 +101,21 @@
             <input type="text" id="itemName" class="form-input" placeholder="Ex: Banana, Maçã, Tomate..." required>
           </div>
           
-          <div class="form-row">
-            <div class="form-group">
-              <label for="itemPrice" class="form-label">Preço do Kilo (R$)</label>
-              <div class="input-prefix">
-                <span>R$</span>
-                <input type="text" id="itemPrice" class="form-input" inputmode="decimal" placeholder="0,00" required>
-              </div>
+          <div class="form-group">
+            <label for="itemPrice" class="form-label">Preço do Kilo (R$)</label>
+            <div class="input-prefix">
+              <span>R$</span>
+              <input type="text" id="itemPrice" class="form-input" inputmode="decimal" placeholder="0,00" required>
             </div>
-            
-            <div class="form-group">
-              <label for="itemQty" class="form-label">Peso</label>
-              <div class="input-suffix">
-                <input type="text" id="itemQty" class="form-input" inputmode="decimal" placeholder="0,00" required>
-                <div class="unit-selector" id="addUnitSelector">
-                  <button type="button" class="unit-option active" data-unit="kg">KG</button>
-                  <button type="button" class="unit-option" data-unit="g">g</button>
-                </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="itemQty" class="form-label">Peso</label>
+            <div class="input-suffix">
+              <input type="text" id="itemQty" class="form-input" inputmode="decimal" placeholder="0,00" required>
+              <div class="unit-selector" id="addUnitSelector">
+                <button type="button" class="unit-option active" data-unit="kg">KG</button>
+                <button type="button" class="unit-option" data-unit="g">g</button>
               </div>
             </div>
           </div>
@@ -198,22 +196,20 @@
           <label class="form-label">Nome do Produto</label>
           <input type="text" id="editItemName" class="form-input" disabled style="opacity: 0.7; background: var(--bg-input);" />
         </div>
-        <div class="form-row" style="text-align: left;">
-          <div class="form-group">
-            <label for="editItemPrice" class="form-label">Preço do Kilo (R$)</label>
-            <div class="input-prefix">
-              <span>R$</span>
-              <input type="text" id="editItemPrice" class="form-input" inputmode="decimal" required />
-            </div>
+        <div class="form-group" style="text-align: left;">
+          <label for="editItemPrice" class="form-label">Preço do Kilo (R$)</label>
+          <div class="input-prefix">
+            <span>R$</span>
+            <input type="text" id="editItemPrice" class="form-input" inputmode="decimal" required />
           </div>
-          <div class="form-group">
-            <label for="editItemQty" class="form-label">Peso</label>
-            <div class="input-suffix">
-              <input type="text" id="editItemQty" class="form-input" inputmode="decimal" required />
-              <div class="unit-selector" id="editUnitSelector">
-                <button type="button" class="unit-option active" data-unit="kg">KG</button>
-                <button type="button" class="unit-option" data-unit="g">g</button>
-              </div>
+        </div>
+        <div class="form-group" style="text-align: left;">
+          <label for="editItemQty" class="form-label">Peso</label>
+          <div class="input-suffix">
+            <input type="text" id="editItemQty" class="form-input" inputmode="decimal" required />
+            <div class="unit-selector" id="editUnitSelector">
+              <button type="button" class="unit-option active" data-unit="kg">KG</button>
+              <button type="button" class="unit-option" data-unit="g">g</button>
             </div>
           </div>
         </div>

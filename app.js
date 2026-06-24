@@ -124,12 +124,17 @@ function showToast(message, duration = 2000) {
   showToast._timer = setTimeout(() => dom.toast.classList.add('hidden'), duration);
 }
 
-function applyDecimalMask(inputElement) {
+function applyDecimalMask(inputElement, isIntegerFunc = null) {
   if (!inputElement) return;
 
   const formatValue = (val) => {
     let clean = String(val).replace(/\D/g, '');
     if (!clean) return '';
+    
+    if (isIntegerFunc && isIntegerFunc()) {
+      return parseInt(clean, 10).toString();
+    }
+
     const numberValue = parseInt(clean, 10) / 100;
     return numberValue.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
@@ -260,15 +265,20 @@ window.openEditModal = function(id) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
-  dom.editItemQty.value = item.quantity.toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
   
   const itemUnit = item.unit || 'kg';
   document.querySelectorAll('#editUnitSelector .unit-option').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.unit === itemUnit);
   });
+
+  if (itemUnit === 'g') {
+    dom.editItemQty.value = Math.round(item.quantity).toString();
+  } else {
+    dom.editItemQty.value = item.quantity.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
   
   dom.editModal.classList.remove('hidden');
 };
@@ -683,9 +693,15 @@ function init() {
   
   // Atrela as máscaras decimais aos inputs numéricos
   applyDecimalMask(dom.itemPrice);
-  applyDecimalMask(dom.itemQty);
+  applyDecimalMask(dom.itemQty, () => {
+    const active = document.querySelector('#addUnitSelector .unit-option.active');
+    return active && active.dataset.unit === 'g';
+  });
   applyDecimalMask(dom.editItemPrice);
-  applyDecimalMask(dom.editItemQty);
+  applyDecimalMask(dom.editItemQty, () => {
+    const active = document.querySelector('#editUnitSelector .unit-option.active');
+    return active && active.dataset.unit === 'g';
+  });
   
   render();
 
@@ -727,14 +743,15 @@ function setupUnitSelectors() {
       let val = parseInputNumber(input.value);
       if (val > 0) {
         if (targetUnit === 'g') {
-          val = val * 1000;
+          val = Math.round(val * 1000);
+          input.value = val.toString();
         } else {
           val = val / 1000;
+          input.value = val.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
         }
-        input.value = val.toLocaleString('pt-BR', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
       }
     });
   };
